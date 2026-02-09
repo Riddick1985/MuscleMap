@@ -4,6 +4,13 @@ A native SwiftUI SDK for rendering interactive human body muscle maps with highl
 
 Supports **male & female** body models with **front & back** views.
 
+<p align="center">
+  <img src="Screenshots/male_front_highlight.png" width="180" alt="Male Front">
+  <img src="Screenshots/male_back_highlight.png" width="180" alt="Male Back">
+  <img src="Screenshots/female_front_highlight.png" width="180" alt="Female Front">
+  <img src="Screenshots/female_back_highlight.png" width="180" alt="Female Back">
+</p>
+
 ## Features
 
 - SVG-based body rendering via SwiftUI `Canvas`
@@ -66,6 +73,11 @@ BodyView(gender: .female, side: .front)
 
 ### Heatmap
 
+<p align="center">
+  <img src="Screenshots/heatmap_workout.png" width="200" alt="Workout Heatmap">
+  <img src="Screenshots/heatmap_thermal.png" width="200" alt="Thermal Heatmap">
+</p>
+
 ```swift
 // Integer scale (0-4, like workout trackers)
 BodyView(gender: .male, side: .front)
@@ -101,6 +113,11 @@ let custom = HeatmapColorScale(colors: [.blue, .purple, .pink])
 ```
 
 ### Styles
+
+<p align="center">
+  <img src="Screenshots/style_neon.png" width="200" alt="Neon Style">
+  <img src="Screenshots/style_medical.png" width="200" alt="Medical Style">
+</p>
 
 ```swift
 BodyView(gender: .male, side: .front)
