@@ -35,36 +35,34 @@ struct BodyAccessibilityOverlay: View {
 
         ZStack {
             ForEach(muscles, id: \.muscle) { item in
-                Color.clear
-                    .frame(width: item.rect.width, height: item.rect.height)
-                    .position(x: item.rect.midX, y: item.rect.midY)
-                    .accessibilityElement()
-                    .accessibilityLabel(item.muscle.displayName)
-                    .accessibilityValue(
-                        selectedMuscles.contains(item.muscle)
-                            ? NSLocalizedString("accessibility.selected", bundle: .module, comment: "")
-                            : NSLocalizedString("accessibility.notSelected", bundle: .module, comment: "")
-                    )
-                    .accessibilityHint(
-                        onMuscleLongPressed != nil
-                            ? NSLocalizedString("accessibility.hint.longPress", bundle: .module, comment: "")
-                            : NSLocalizedString("accessibility.hint.tap", bundle: .module, comment: "")
-                    )
-                    .accessibilityAddTraits(
-                        selectedMuscles.contains(item.muscle)
-                            ? [.isButton, .isSelected]
-                            : [.isButton]
-                    )
-                    .accessibilityAction(.default) {
-                        onMuscleSelected?(item.muscle, .both)
-                    }
-                    .accessibilityAction(named: Text(NSLocalizedString("accessibility.hint.longPress", bundle: .module, comment: ""))) {
-                        onMuscleLongPressed?(item.muscle, .both)
-                    }
+                accessibilityElement(for: item)
             }
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(NSLocalizedString("accessibility.bodyMap", bundle: .module, comment: ""))
+    }
+
+    @ViewBuilder
+    private func accessibilityElement(for item: MuscleAccessibilityItem) -> some View {
+        let isSelected = selectedMuscles.contains(item.muscle)
+        let valueKey = isSelected ? "accessibility.selected" : "accessibility.notSelected"
+        let hintKey = onMuscleLongPressed != nil ? "accessibility.hint.longPress" : "accessibility.hint.tap"
+        let traits: AccessibilityTraits = isSelected ? [.isButton, .isSelected] : [.isButton]
+
+        Color.clear
+            .frame(width: item.rect.width, height: item.rect.height)
+            .position(x: item.rect.midX, y: item.rect.midY)
+            .accessibilityElement()
+            .accessibilityLabel(item.muscle.displayName)
+            .accessibilityValue(NSLocalizedString(valueKey, bundle: .module, comment: ""))
+            .accessibilityHint(NSLocalizedString(hintKey, bundle: .module, comment: ""))
+            .accessibilityAddTraits(traits)
+            .accessibilityAction(.default) {
+                onMuscleSelected?(item.muscle, .both)
+            }
+            .accessibilityAction(named: Text(NSLocalizedString("accessibility.hint.longPress", bundle: .module, comment: ""))) {
+                onMuscleLongPressed?(item.muscle, .both)
+            }
     }
 
     // MARK: - Private
@@ -95,7 +93,7 @@ struct BodyAccessibilityOverlay: View {
 }
 
 /// A muscle with its bounding rect for accessibility layout.
-private struct MuscleAccessibilityItem {
+fileprivate struct MuscleAccessibilityItem {
     let muscle: Muscle
     let rect: CGRect
 }

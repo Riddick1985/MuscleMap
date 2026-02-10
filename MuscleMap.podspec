@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/melihcolpan/MuscleMap.git", :tag => s.version.to_s }
   s.source_files = "Sources/MuscleMap/**/*.swift"
-  s.resources    = "Sources/MuscleMap/Resources/**/*.strings"
+  s.resource_bundles = { "MuscleMap" => ["Sources/MuscleMap/Resources/**/*.strings"] }
 
   s.frameworks   = "SwiftUI"
 end
