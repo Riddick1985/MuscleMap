@@ -23,6 +23,7 @@ struct AnimatedBodyContainer: View {
     let onMuscleDragged: ((Muscle, MuscleSide) -> Void)?
     let onMuscleDragEnded: (() -> Void)?
     let longPressDuration: Double
+    var hideSubGroups: Bool = true
     @State private var currentHighlights: [Muscle: MuscleHighlight] = [:]
     @State private var previousHighlights: [Muscle: MuscleHighlight] = [:]
     @State private var progress: Double = 1.0
@@ -37,7 +38,8 @@ struct AnimatedBodyContainer: View {
                     highlights: blended,
                     style: style,
                     selectedMuscles: selectedMuscles,
-                    selectionPulseFactor: selectionPulseFactor
+                    selectionPulseFactor: selectionPulseFactor,
+                    hideSubGroups: hideSubGroups
                 )
                 renderer.render(context: &context, size: size)
             }
@@ -54,7 +56,8 @@ struct AnimatedBodyContainer: View {
                     onMuscleLongPressed: onMuscleLongPressed,
                     onMuscleDragged: onMuscleDragged,
                     onMuscleDragEnded: onMuscleDragEnded,
-                    longPressDuration: longPressDuration
+                    longPressDuration: longPressDuration,
+                    hideSubGroups: hideSubGroups
                 )
             }
             .overlay {
@@ -66,7 +69,8 @@ struct AnimatedBodyContainer: View {
                     selectedMuscles: selectedMuscles,
                     size: geometry.size,
                     onMuscleSelected: onMuscleSelected,
-                    onMuscleLongPressed: onMuscleLongPressed
+                    onMuscleLongPressed: onMuscleLongPressed,
+                    hideSubGroups: hideSubGroups
                 )
             }
         }
@@ -153,6 +157,7 @@ struct PulseBodyView: View {
     let onMuscleDragEnded: (() -> Void)?
     let longPressDuration: Double
     let tooltipContent: ((Muscle, MuscleSide) -> AnyView)?
+    var hideSubGroups: Bool = true
 
     var body: some View {
         TimelineView(.animation) { timeline in
@@ -170,7 +175,8 @@ struct PulseBodyView: View {
                 onMuscleDragged: onMuscleDragged,
                 onMuscleDragEnded: onMuscleDragEnded,
                 longPressDuration: longPressDuration,
-                tooltipContent: tooltipContent
+                tooltipContent: tooltipContent,
+                hideSubGroups: hideSubGroups
             )
         }
     }
@@ -192,6 +198,7 @@ private struct PulseBodyCanvas: View {
     let onMuscleDragEnded: (() -> Void)?
     let longPressDuration: Double
     let tooltipContent: ((Muscle, MuscleSide) -> AnyView)?
+    var hideSubGroups: Bool = true
 
     private var pulseFactor: Double {
         let elapsed = date.timeIntervalSinceReferenceDate
@@ -208,7 +215,8 @@ private struct PulseBodyCanvas: View {
                     highlights: highlights,
                     style: style,
                     selectedMuscles: selectedMuscles,
-                    selectionPulseFactor: pulseFactor
+                    selectionPulseFactor: pulseFactor,
+                    hideSubGroups: hideSubGroups
                 )
                 renderer.render(context: &context, size: size)
             }
@@ -225,7 +233,8 @@ private struct PulseBodyCanvas: View {
                     onMuscleLongPressed: onMuscleLongPressed,
                     onMuscleDragged: onMuscleDragged,
                     onMuscleDragEnded: onMuscleDragEnded,
-                    longPressDuration: longPressDuration
+                    longPressDuration: longPressDuration,
+                    hideSubGroups: hideSubGroups
                 )
             }
             .overlay {
@@ -237,7 +246,8 @@ private struct PulseBodyCanvas: View {
                         style: style,
                         selectedMuscles: selectedMuscles,
                         size: geometry.size,
-                        content: tooltipContent
+                        content: tooltipContent,
+                        hideSubGroups: hideSubGroups
                     )
                 }
             }
@@ -250,7 +260,8 @@ private struct PulseBodyCanvas: View {
                     selectedMuscles: selectedMuscles,
                     size: geometry.size,
                     onMuscleSelected: onMuscleSelected,
-                    onMuscleLongPressed: onMuscleLongPressed
+                    onMuscleLongPressed: onMuscleLongPressed,
+                    hideSubGroups: hideSubGroups
                 )
             }
         }
@@ -266,6 +277,7 @@ struct AnimatedBodyCanvas: View, Animatable {
     let selectedMuscles: Set<Muscle>
     var animationProgress: Double
     let selectionPulseFactor: Double
+    var hideSubGroups: Bool = true
 
     var animatableData: Double {
         get { animationProgress }
@@ -280,7 +292,8 @@ struct AnimatedBodyCanvas: View, Animatable {
                 highlights: highlights,
                 style: style,
                 selectedMuscles: selectedMuscles,
-                selectionPulseFactor: selectionPulseFactor
+                selectionPulseFactor: selectionPulseFactor,
+                hideSubGroups: hideSubGroups
             )
             renderer.render(context: &context, size: size)
         }

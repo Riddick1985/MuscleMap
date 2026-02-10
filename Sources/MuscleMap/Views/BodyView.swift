@@ -58,6 +58,9 @@ public struct BodyView: View {
     // Undo
     private var selectionHistory: SelectionHistory?
 
+    // Sub-groups
+    private var hideSubGroups: Bool = true
+
     // Heatmap configuration
     private var heatmapConfig: HeatmapConfiguration?
 
@@ -128,7 +131,8 @@ public struct BodyView: View {
             onMuscleLongPressed: onMuscleLongPressed,
             onMuscleDragged: onMuscleDragged,
             onMuscleDragEnded: onMuscleDragEnded,
-            longPressDuration: longPressDuration
+            longPressDuration: longPressDuration,
+            hideSubGroups: hideSubGroups
         )
     }
 
@@ -147,7 +151,8 @@ public struct BodyView: View {
             onMuscleDragged: onMuscleDragged,
             onMuscleDragEnded: onMuscleDragEnded,
             longPressDuration: longPressDuration,
-            tooltipContent: tooltipContent
+            tooltipContent: tooltipContent,
+            hideSubGroups: hideSubGroups
         )
     }
 
@@ -171,7 +176,8 @@ public struct BodyView: View {
                     onMuscleDragged: onMuscleDragged,
                     onMuscleDragEnded: onMuscleDragEnded,
                     longPressDuration: longPressDuration,
-                    tooltipContent: tooltipContent
+                    tooltipContent: tooltipContent,
+                    hideSubGroups: hideSubGroups
                 )
             } else {
                 standardBody
@@ -187,7 +193,8 @@ public struct BodyView: View {
             side: side,
             highlights: highlights,
             style: style,
-            selectedMuscles: selectedMuscles
+            selectedMuscles: selectedMuscles,
+            hideSubGroups: hideSubGroups
         )
     }
 
@@ -203,7 +210,8 @@ public struct BodyView: View {
             onMuscleLongPressed: onMuscleLongPressed,
             onMuscleDragged: onMuscleDragged,
             onMuscleDragEnded: onMuscleDragEnded,
-            longPressDuration: longPressDuration
+            longPressDuration: longPressDuration,
+            hideSubGroups: hideSubGroups
         )
     }
 
@@ -216,7 +224,8 @@ public struct BodyView: View {
             selectedMuscles: selectedMuscles,
             size: size,
             onMuscleSelected: wrappedOnMuscleSelected,
-            onMuscleLongPressed: onMuscleLongPressed
+            onMuscleLongPressed: onMuscleLongPressed,
+            hideSubGroups: hideSubGroups
         )
     }
 
@@ -230,7 +239,8 @@ public struct BodyView: View {
                 style: style,
                 selectedMuscles: selectedMuscles,
                 size: size,
-                content: tooltipContent
+                content: tooltipContent,
+                hideSubGroups: hideSubGroups
             )
         }
     }
@@ -454,6 +464,14 @@ extension BodyView {
         var copy = self
         copy.isAnimated = true
         copy.animationDuration = duration
+        return copy
+    }
+
+    /// Shows sub-group muscle details (e.g. upperChest, lowerChest) instead of using only parent groups.
+    /// Sub-groups are hidden by default.
+    public func showSubGroups() -> BodyView {
+        var copy = self
+        copy.hideSubGroups = false
         return copy
     }
 

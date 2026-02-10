@@ -19,6 +19,7 @@ struct MuscleTooltipOverlay: View {
     let selectedMuscles: Set<Muscle>
     let size: CGSize
     let content: (Muscle, MuscleSide) -> AnyView
+    var hideSubGroups: Bool = true
 
     var body: some View {
         GeometryReader { geometry in
@@ -27,7 +28,8 @@ struct MuscleTooltipOverlay: View {
                 side: side,
                 highlights: highlights,
                 style: style,
-                selectedMuscles: selectedMuscles
+                selectedMuscles: selectedMuscles,
+                hideSubGroups: hideSubGroups
             )
 
             ForEach(Array(selectedMuscles), id: \.self) { muscle in

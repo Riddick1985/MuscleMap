@@ -20,6 +20,7 @@ struct BodyAccessibilityOverlay: View {
     let size: CGSize
     let onMuscleSelected: ((Muscle, MuscleSide) -> Void)?
     let onMuscleLongPressed: ((Muscle, MuscleSide) -> Void)?
+    var hideSubGroups: Bool = true
 
     var body: some View {
         let renderer = BodyRenderer(
@@ -27,7 +28,8 @@ struct BodyAccessibilityOverlay: View {
             side: side,
             highlights: highlights,
             style: style,
-            selectedMuscles: selectedMuscles
+            selectedMuscles: selectedMuscles,
+            hideSubGroups: hideSubGroups
         )
         let muscles = visibleMuscles(renderer: renderer)
 
@@ -78,6 +80,7 @@ struct BodyAccessibilityOverlay: View {
             guard let muscle = bodyPart.slug.muscle,
                   !muscle.isCosmeticPart,
                   !seen.contains(muscle) else { continue }
+            if hideSubGroups && muscle.isSubGroup && !muscle.isAlwaysVisibleSubGroup { continue }
             seen.insert(muscle)
 
             if let rect = renderer.boundingRect(for: muscle, in: size), !rect.isEmpty {

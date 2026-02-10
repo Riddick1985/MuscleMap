@@ -17,6 +17,7 @@ struct BodyRenderer {
     let style: BodyViewStyle
     let selectedMuscles: Set<Muscle>
     var selectionPulseFactor: Double = 1.0
+    let hideSubGroups: Bool
 
     /// Primary initializer with multi-select support.
     init(
@@ -25,7 +26,8 @@ struct BodyRenderer {
         highlights: [Muscle: MuscleHighlight],
         style: BodyViewStyle,
         selectedMuscles: Set<Muscle>,
-        selectionPulseFactor: Double = 1.0
+        selectionPulseFactor: Double = 1.0,
+        hideSubGroups: Bool = true
     ) {
         self.gender = gender
         self.side = side
@@ -33,6 +35,7 @@ struct BodyRenderer {
         self.style = style
         self.selectedMuscles = selectedMuscles
         self.selectionPulseFactor = selectionPulseFactor
+        self.hideSubGroups = hideSubGroups
     }
 
     /// Backward-compatible initializer accepting optional single muscle.
@@ -42,7 +45,8 @@ struct BodyRenderer {
         highlights: [Muscle: MuscleHighlight],
         style: BodyViewStyle,
         selectedMuscle: Muscle?,
-        selectionPulseFactor: Double = 1.0
+        selectionPulseFactor: Double = 1.0,
+        hideSubGroups: Bool = true
     ) {
         self.init(
             gender: gender,
@@ -50,7 +54,8 @@ struct BodyRenderer {
             highlights: highlights,
             style: style,
             selectedMuscles: selectedMuscle.map { Set([$0]) } ?? [],
-            selectionPulseFactor: selectionPulseFactor
+            selectionPulseFactor: selectionPulseFactor,
+            hideSubGroups: hideSubGroups
         )
     }
 
@@ -69,9 +74,18 @@ struct BodyRenderer {
         let hasShadow = style.shadowRadius > 0
 
         for bodyPart in bodyParts {
+            if hideSubGroups, let m = bodyPart.slug.muscle, m.isSubGroup, !m.isAlwaysVisibleSubGroup { continue }
+
             let muscle = bodyPart.slug.muscle
             let highlight = muscle.flatMap { highlights[$0] }
-            let isSelected = muscle.map { selectedMuscles.contains($0) } ?? false
+            let isSelected: Bool = {
+                guard let m = muscle else { return false }
+                if selectedMuscles.contains(m) { return true }
+                if hideSubGroups, m.isAlwaysVisibleSubGroup, let parent = m.parentGroup {
+                    return selectedMuscles.contains(parent)
+                }
+                return false
+            }()
 
             let fill = resolveFill(
                 for: bodyPart.slug,
@@ -171,20 +185,29 @@ struct BodyRenderer {
 
         for bodyPart in sortedParts {
             guard let muscle = bodyPart.slug.muscle else { continue }
+            if hideSubGroups && muscle.isSubGroup && !muscle.isAlwaysVisibleSubGroup { continue }
+
+            // Always-visible sub-groups return parent when sub-groups are hidden
+            let resolvedMuscle: Muscle
+            if hideSubGroups && muscle.isAlwaysVisibleSubGroup, let parent = muscle.parentGroup {
+                resolvedMuscle = parent
+            } else {
+                resolvedMuscle = muscle
+            }
 
             for pathString in bodyPart.left {
                 let path = pathCache.path(for: pathString, scale: scale, offsetX: offsetX, offsetY: offsetY)
-                if path.contains(point) { return (muscle, .left) }
+                if path.contains(point) { return (resolvedMuscle, .left) }
             }
 
             for pathString in bodyPart.right {
                 let path = pathCache.path(for: pathString, scale: scale, offsetX: offsetX, offsetY: offsetY)
-                if path.contains(point) { return (muscle, .right) }
+                if path.contains(point) { return (resolvedMuscle, .right) }
             }
 
             for pathString in bodyPart.common {
                 let path = pathCache.path(for: pathString, scale: scale, offsetX: offsetX, offsetY: offsetY)
-                if path.contains(point) { return (muscle, .both) }
+                if path.contains(point) { return (resolvedMuscle, .both) }
             }
         }
 

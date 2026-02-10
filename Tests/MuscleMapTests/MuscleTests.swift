@@ -4,7 +4,7 @@ import XCTest
 final class MuscleTests: XCTestCase {
 
     func testAllMusclesCaseCount() {
-        // 22 original + 4 new muscles + 10 sub-groups = 36
+        // 19 main + 3 new muscles + 14 sub-groups = 36
         XCTAssertEqual(Muscle.allCases.count, 36)
     }
 

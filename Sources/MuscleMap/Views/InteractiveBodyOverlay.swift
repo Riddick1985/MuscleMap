@@ -24,6 +24,7 @@ struct InteractiveBodyOverlay: View {
     let onMuscleDragged: ((Muscle, MuscleSide) -> Void)?
     let onMuscleDragEnded: (() -> Void)?
     let longPressDuration: Double
+    var hideSubGroups: Bool = true
 
     var body: some View {
         Color.clear
@@ -107,7 +108,8 @@ struct InteractiveBodyOverlay: View {
             side: side,
             highlights: highlights,
             style: style,
-            selectedMuscles: selectedMuscles
+            selectedMuscles: selectedMuscles,
+            hideSubGroups: hideSubGroups
         )
     }
 
