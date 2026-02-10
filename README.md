@@ -1,8 +1,8 @@
 # MuscleMap
 
-A native SwiftUI SDK for rendering interactive human body muscle maps with highlighting, heatmaps, multi-select, zoom, and gesture-rich interaction.
+A native SwiftUI SDK for rendering interactive human body muscle maps with highlighting, heatmaps, multi-select, zoom, gesture-rich interaction, and UIKit support.
 
-Supports **male & female** body models with **front & back** views.
+Supports **male & female** body models with **front & back** views. Works with both **SwiftUI** and **UIKit**.
 
 <p align="center">
   <img src="Screenshots/male_front_highlight.png" width="180" alt="Male Front">
@@ -14,8 +14,9 @@ Supports **male & female** body models with **front & back** views.
 ## Features
 
 - SVG-based body rendering via SwiftUI `Canvas`
-- **36 muscle groups** (22 base + 4 new muscles + 10 sub-groups) with left/right side detection
+- **36 muscle groups** (22 base + 14 sub-groups) with left/right side detection
 - **Muscle sub-groups** with parent/child inheritance and priority hit testing
+- **Always-visible sub-groups** (ankles, adductors, neck) — rendered by default, tap returns parent
 - Heatmap visualization with customizable color scales
 - Tap-to-select with hit testing
 - **Multi-select** (select multiple muscles at once)
@@ -29,8 +30,10 @@ Supports **male & female** body models with **front & back** views.
 - **Transition animations** (fade in/out on highlight changes)
 - **Pulse/glow animation** (for selected muscles)
 - **Shadow/drop shadow** support
+- **UIKit wrappers** (`MuscleMapView`, `HeatmapLegendUIView`)
 - **Accessibility** (VoiceOver support with localized muscle names)
 - **Localization** (11 languages: EN, TR, DE, ES, FR, JA, ZH, KO, AR, PT-BR, RU)
+- **DocC documentation** catalog
 - Zero external dependencies
 - iOS 17+ / macOS 14+
 
@@ -42,11 +45,21 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/melihcolpan/MuscleMap.git", from: "1.5.0")
+    .package(url: "https://github.com/melihcolpan/MuscleMap.git", from: "1.6.0")
 ]
 ```
 
 Or in Xcode: **File > Add Package Dependencies** and paste the repository URL.
+
+### CocoaPods
+
+Add to your `Podfile`:
+
+```ruby
+pod 'MuscleMap', '~> 1.6.0'
+```
+
+Then run `pod install`.
 
 ## Quick Start
 
@@ -394,6 +407,8 @@ Button("Redo") { if let state = history.redo() { selectedMuscles = state } }
 
 Sub-groups provide finer control over muscle regions. They inherit the parent muscle's highlight when no specific highlight is set, and take priority in hit testing.
 
+**Always-visible sub-groups** (ankles, adductors, neck) are rendered by default but return their parent muscle on tap — so tapping the ankle area returns `.feet`, tapping the neck returns `.head`, etc.
+
 ```swift
 // Highlight parent and sub-group with different intensities
 BodyView(gender: .male, side: .front)
@@ -409,6 +424,10 @@ Query sub-group relationships:
 Muscle.chest.subGroups       // [.upperChest, .lowerChest]
 Muscle.upperChest.parentGroup // .chest
 Muscle.upperChest.isSubGroup  // true
+
+// Always-visible sub-groups
+Muscle.ankles.isAlwaysVisibleSubGroup  // true
+Muscle.ankles.parentGroup              // .feet
 ```
 
 ### Gender & Side
@@ -422,13 +441,11 @@ BodyView(gender: .female, side: .back)  // Female back
 
 ## Available Muscles
 
-### Base Muscles
+### Base Muscles (22)
 
 | Muscle | Key |
 |--------|-----|
 | Abs | `.abs` |
-| Adductors | `.adductors` |
-| Ankles | `.ankles` |
 | Biceps | `.biceps` |
 | Calves | `.calves` |
 | Chest | `.chest` |
@@ -439,10 +456,8 @@ BodyView(gender: .female, side: .back)  // Female back
 | Hamstring | `.hamstring` |
 | Hands | `.hands` |
 | Head | `.head` |
-| Hip Flexors | `.hipFlexors` |
 | Knees | `.knees` |
 | Lower Back | `.lowerBack` |
-| Neck | `.neck` |
 | Obliques | `.obliques` |
 | Quadriceps | `.quadriceps` |
 | Rhomboids | `.rhomboids` |
@@ -453,20 +468,68 @@ BodyView(gender: .female, side: .back)  // Female back
 | Triceps | `.triceps` |
 | Upper Back | `.upperBack` |
 
-### Sub-Groups
+### Sub-Groups (14)
 
-| Sub-Group | Key | Parent |
-|-----------|-----|--------|
-| Upper Chest | `.upperChest` | `.chest` |
-| Lower Chest | `.lowerChest` | `.chest` |
-| Upper Abs | `.upperAbs` | `.abs` |
-| Lower Abs | `.lowerAbs` | `.abs` |
-| Inner Quad | `.innerQuad` | `.quadriceps` |
-| Outer Quad | `.outerQuad` | `.quadriceps` |
-| Front Deltoid | `.frontDeltoid` | `.deltoids` |
-| Rear Deltoid | `.rearDeltoid` | `.deltoids` |
-| Upper Trapezius | `.upperTrapezius` | `.trapezius` |
-| Lower Trapezius | `.lowerTrapezius` | `.trapezius` |
+| Sub-Group | Key | Parent | Always Visible |
+|-----------|-----|--------|:--------------:|
+| Upper Chest | `.upperChest` | `.chest` | |
+| Lower Chest | `.lowerChest` | `.chest` | |
+| Upper Abs | `.upperAbs` | `.abs` | |
+| Lower Abs | `.lowerAbs` | `.abs` | |
+| Inner Quad | `.innerQuad` | `.quadriceps` | |
+| Outer Quad | `.outerQuad` | `.quadriceps` | |
+| Hip Flexors | `.hipFlexors` | `.quadriceps` | |
+| Front Deltoid | `.frontDeltoid` | `.deltoids` | |
+| Rear Deltoid | `.rearDeltoid` | `.deltoids` | |
+| Upper Trapezius | `.upperTrapezius` | `.trapezius` | |
+| Lower Trapezius | `.lowerTrapezius` | `.trapezius` | |
+| Ankles | `.ankles` | `.feet` | Yes |
+| Adductors | `.adductors` | `.hamstring` | Yes |
+| Neck | `.neck` | `.head` | Yes |
+
+## UIKit Integration
+
+### MuscleMapView
+
+Drop-in `UIView` wrapper for UIKit-based projects:
+
+```swift
+import MuscleMap
+
+class ViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let muscleMap = MuscleMapView(gender: .male, side: .front)
+        muscleMap.highlight(.chest, color: .systemRed)
+        muscleMap.highlight(.biceps, color: .systemOrange, opacity: 0.8)
+        muscleMap.onMuscleSelected = { muscle, side in
+            print("\(muscle.displayName) tapped")
+        }
+
+        view.addSubview(muscleMap)
+        muscleMap.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            muscleMap.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            muscleMap.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            muscleMap.widthAnchor.constraint(equalToConstant: 300),
+            muscleMap.heightAnchor.constraint(equalToConstant: 500)
+        ])
+    }
+}
+```
+
+### HeatmapLegendUIView
+
+UIKit wrapper for the heatmap legend:
+
+```swift
+let legend = HeatmapLegendUIView(colorScale: .thermal)
+legend.orientation = .vertical
+legend.labelMin = "Rest"
+legend.labelMax = "Max"
+view.addSubview(legend)
+```
 
 ## Accessibility
 
@@ -515,6 +578,10 @@ MuscleSide.left.displayName     // "Left" (EN), "Sol" (TR), "Links" (DE)
 BodySide.front.displayName      // "Front" (EN), "Ön" (TR), "Vorderseite" (DE)
 BodyGender.male.displayName     // "Male" (EN), "Erkek" (TR), "Männlich" (DE)
 ```
+
+## Example App
+
+A demo app is included in the `Example/` directory. Open `Example/MuscleMapDemoApp.xcodeproj` in Xcode to explore all features interactively.
 
 ## Requirements
 
